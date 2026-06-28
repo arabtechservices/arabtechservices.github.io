@@ -209,32 +209,116 @@
 
     <section id="contact" class="contact-cta">
   <div class="container">
+
     <div class="contact-content">
       <h2>Ready for Reliable Service?</h2>
-      <p>Contact our certified team today for a fast <b>service, parts, or quotation</b> request. We are available 24/7.</p>
+      <p>
+        Contact our certified team today for a fast
+        <b>service, parts, or quotation</b> request.
+        We are available 24/7.
+      </p>
     </div>
 
+    <form id="contactForm" class="contact-form">
 
- <form action="https://formsubmit.co/arabtechservices@outlook.com" method="POST" class="contact-form">
-  <input type="text" name="name" placeholder="Your Name" required>
-  <input type="email" name="email" placeholder="Your Email" required>
-  <input type="tel" name="phone" placeholder="Your Phone Number" required>
-  <textarea name="message" placeholder="Service Needed (e.g., Excavator won't start) or Parts Inquiry" rows="3" required></textarea>
+      <input
+        type="text"
+        name="name"
+        placeholder="Your Name"
+        required
+      >
 
-  <!-- Hidden fields for customization -->
-  <input type="hidden" name="_subject" value="New Inquiry from ArabTech Services">
-  <input type="hidden" name="_captcha" value="false">
-  <input type="hidden" name="_next" value="https://arabtechmachinery.com/thank-you.html">
+      <input
+        type="email"
+        name="email"
+        placeholder="Your Email"
+        required
+      >
 
-  <button type="submit" class="btn btn-secondary">Submit Inquiry</button>
-</form>
+      <input
+        type="tel"
+        name="phone"
+        placeholder="Your Phone Number"
+        required
+      >
 
+      <textarea
+        name="message"
+        placeholder="Service Needed (e.g., Excavator won't start) or Parts Inquiry"
+        rows="3"
+        required
+      ></textarea>
 
+      <button
+        type="submit"
+        class="btn btn-secondary"
+        id="submitBtn">
+        Submit Inquiry
+      </button>
 
+    </form>
 
   </div>
 </section>
 
+<script>
+const form = document.getElementById("contactForm");
+const submitBtn = document.getElementById("submitBtn");
+
+form.addEventListener("submit", async function (e) {
+
+    e.preventDefault();
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Sending...";
+
+    const formData = {
+        name: form.name.value,
+        email: form.email.value,
+        phone: form.phone.value,
+        service: "Website Enquiry",
+        message: form.message.value
+    };
+
+    try {
+
+        const response = await fetch("YOUR_CLOUDFLARE_WORKER_URL", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify(formData)
+
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+
+            alert("✅ Thank you! Your enquiry has been submitted successfully.");
+
+            form.reset();
+
+        } else {
+
+            alert("❌ " + (result.error || result.message));
+
+        }
+
+    } catch (err) {
+
+        alert("Unable to send enquiry. Please try again.");
+
+    }
+
+    submitBtn.disabled = false;
+    submitBtn.innerText = "Submit Inquiry";
+
+});
+</script>
 
     <footer class="main-footer">
         <div class="container">
