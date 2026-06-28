@@ -264,6 +264,7 @@
         required
       ></textarea>
 
+      <div id="formError" class="form-error" style="display: none;" aria-live="assertive"></div>
       <button
         type="submit"
         class="btn btn-secondary"
@@ -273,65 +274,134 @@
 
     </form>
 
+    <div id="successCard" class="success-card" tabindex="-1" aria-live="polite">
+        <h3>✅ Thank You!</h3>
+        <p>Your enquiry has been submitted successfully.</p>
+        <p>Our team has received your request and will contact you as soon as possible.</p>
+        <button type="button" class="btn btn-secondary" id="newEnquiryBtn">
+            New Enquiry
+        </button>
+    </div>
+
   </div>
 </section>
 
 <script>
 const form = document.getElementById("contactForm");
 const submitBtn = document.getElementById("submitBtn");
+const successCard = document.getElementById("successCard");
+const newEnquiryBtn = document.getElementById("newEnquiryBtn");
+const formError = document.getElementById("formError");
 
 form.addEventListener("submit", async function (e) {
-
     e.preventDefault();
 
-    submitBtn.disabled = true;
-    submitBtn.innerText = "Sending...";
+    // Hide error
+    formError.style.display = "none";
+    formError.innerText = "";
 
+    const emailStr = form.elements["email"].value.trim();
+    const phoneStr = form.elements["phone"].value.trim();
+
+    // Client-side email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailStr)) {
+        showError("Please enter a valid email address.");
+        return;
+    }
+
+    // Client-side phone validation
+    const phoneRegex = /^[0-9+\-\s()]{7,20}$/;
+    if (!phoneRegex.test(phoneStr)) {
+        showError("Please enter a valid phone number.");
+        return;
+    }
+
+    // 1. Collect data BEFORE disabling fields to ensure values are captured
     const formData = {
-        name: form.name.value,
-        email: form.email.value,
-        phone: form.phone.value,
-        service: form.service.value,
-        message: form.message.value
+        name: form.elements["name"].value,
+        email: emailStr,
+        phone: phoneStr,
+        service: form.elements["service"].value,
+        message: form.elements["message"].value
     };
 
+    // 2. Disable fields
+    const formElements = form.elements;
+    for (let i = 0; i < formElements.length; i++) {
+        formElements[i].disabled = true;
+    }
+
+    // 3. Update button
+    submitBtn.style.textTransform = "none"; // Temporarily disable uppercase for exactly "Submitting..."
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+
+    // 4. API Call
     try {
-
         const response = await fetch("https://arabtech-contact-api.arabtechmachinery.workers.dev/api/enquiry", {
-
             method: "POST",
-
-            headers: {
-                "Content-Type": "application/json"
-            },
-
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData)
-
         });
 
         const result = await response.json();
 
         if (result.success) {
-
-            alert("✅ Thank you! Your enquiry has been submitted successfully.");
-
-            form.reset();
-
+            form.style.opacity = '0';
+            setTimeout(() => {
+                form.style.display = 'none';
+                successCard.style.display = 'flex';
+                // Trigger reflow
+                successCard.offsetHeight;
+                successCard.style.opacity = '1';
+                successCard.focus();
+            }, 300);
         } else {
-
-            alert("❌ " + (result.error || result.message));
-
+            let errMsg = result.error || result.message;
+            if (!errMsg && result.errors && result.errors.fieldErrors) {
+                const fieldErrors = Object.values(result.errors.fieldErrors).flat();
+                if (fieldErrors.length > 0) {
+                    errMsg = fieldErrors.join(" | ");
+                }
+            }
+            showError(errMsg || "Something went wrong. Please try again.");
+            enableForm();
         }
 
     } catch (err) {
-
-        alert("Unable to send enquiry. Please try again.");
-
+        showError("Network error: Something went wrong. Please try again.");
+        enableForm();
     }
+});
 
-    submitBtn.disabled = false;
+function showError(message) {
+    formError.innerText = message;
+    formError.style.display = "block";
+}
+
+function enableForm() {
+    const formElements = form.elements;
+    for (let i = 0; i < formElements.length; i++) {
+        formElements[i].disabled = false;
+    }
+    submitBtn.style.textTransform = "";
     submitBtn.innerText = "Submit Inquiry";
+}
 
+newEnquiryBtn.addEventListener("click", () => {
+    successCard.style.opacity = '0';
+    setTimeout(() => {
+        successCard.style.display = 'none';
+        form.style.display = 'grid';
+        enableForm(); // Enable fields before resetting
+        form.reset();
+        formError.style.display = "none";
+        formError.innerText = "";
+        // Trigger reflow
+        form.offsetHeight;
+        form.style.opacity = '1';
+        form.elements["name"].focus();
+    }, 300);
 });
 </script>
 
