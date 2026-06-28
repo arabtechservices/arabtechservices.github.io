@@ -392,7 +392,9 @@ body {
 }
 
 .success-card .btn-secondary {
-    margin-top: 25px;
+    margin: 25px auto 0 auto;
+    display: inline-block;
+    align-self: center;
 }
 
 .form-error {
