@@ -220,64 +220,23 @@
     </div>
 
     <form id="contactForm" class="contact-form">
-
-      <input
-        type="text"
-        name="name"
-        placeholder="Your Name"
-        required
-      >
-
-      <input
-        type="email"
-        name="email"
-        placeholder="Your Email"
-        required
-      >
-
-      <input
-        type="tel"
-        name="phone"
-        placeholder="Your Phone Number"
-        required
-      >
-
-
+      <input type="text" name="name" placeholder="Your Name" required>
+      <input type="email" name="email" placeholder="Your Email" required>
+      <input type="tel" name="phone" placeholder="Your Phone Number" required>
       <select name="service" class="service-select" required>
-    <option value="">Select Required Service</option>
-
-    <option value="Heavy Equipment Repair">Heavy Equipment Repair</option>
-    <option value="Hydraulic System Repair">Hydraulic System Repair</option>
-    <option value="Engine Repair">Engine Repair</option>
-    <option value="Spare Parts Supply">Spare Parts Supply</option>
-    <option value="Preventive Maintenance">Preventive Maintenance</option>
-    <option value="Annual Maintenance Contract">Annual Maintenance Contract</option>
-    <option value="Site Inspection">Site Inspection</option>
-    <option value="Quotation Request">Quotation Request</option>
-    <option value="Other">Other</option>
-</select>
-
-      <textarea
-        name="message"
-        placeholder="Service Needed (e.g., Excavator won't start) or Parts Inquiry"
-        rows="3"
-        required
-      ></textarea>
-
+        <option value="">Select Required Service</option>
+        <option value="Heavy Equipment Repair">Heavy Equipment Repair</option>
+        <option value="Other">Other</option>
+      </select>
+      <textarea name="message" placeholder="Service Needed" rows="3" required></textarea>
       <div id="formError" class="form-error" style="display: none;" aria-live="assertive"></div>
-      <button
-        type="submit"
-        class="btn btn-secondary"
-        id="submitBtn">
-        Submit Inquiry
-      </button>
-
+      <button type="submit" class="btn btn-secondary" id="submitBtn">Submit Inquiry</button>
     </form>
 
     <div id="successCard" class="success-card" tabindex="-1" aria-live="polite">
-        <h3>✅ Thank You!</h3>
-        <p>Your enquiry has been submitted successfully.</p>
-        <p>Our team has received your request and will contact you as soon as possible.</p>
+        <h3>Thank You!</h3>
+        <p>Your enquiry has been successfully submitted.</p>
+        <p>Our team has received your request and will be in touch with you shortly.</p>
         <button type="button" class="btn btn-secondary" id="newEnquiryBtn">
             New Enquiry
         </button>
